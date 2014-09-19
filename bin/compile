@@ -20,6 +20,7 @@ CACHE_DIR=$2
 # Setup profile file
 PROFILE_PATH="$BUILD_DIR/.profile.d/geo.sh"
 mkdir -p $(dirname $PROFILE_PATH)
+EXPORT_PATH="$PWD/export"
 
 # Functions
 function indent() {
@@ -46,10 +47,12 @@ function download_package() {
 
 function set-env (){
   echo "export $1=$2" >> $PROFILE_PATH
+  echo "export $1=\$$1:$2" >> $EXPORT_PATH
 }
 
 function set-default-env (){
   echo "export $1=\${$1:-$2}" >> $PROFILE_PATH
+  echo "export $1=\$$1:$2" >> $EXPORT_PATH
 }
 
 # Retrieve versions
