@@ -50,9 +50,10 @@ function set-env (){
   echo "export $1=\$$1:$2" >> $EXPORT_PATH
 }
 
+# appends to a colon-delimited envvar
 function set-default-env (){
-  echo "export $1=\${$1:-$2}" >> $PROFILE_PATH
-  echo "export $1=\$$1:$2" >> $EXPORT_PATH
+  echo "export $1=\$$1\${$1:+:}$2" >> $PROFILE_PATH
+  echo "export $1=\$$1\${$1:+:}$2" >> $EXPORT_PATH
 }
 
 # Retrieve versions
