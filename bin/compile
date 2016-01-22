@@ -58,17 +58,14 @@ function set-default-env (){
 
 # Retrieve versions
 GEOS_VERSION=$(manifest_version "geos")
-GDAL_VERSION=$(manifest_version "gdal")
 PROJ_VERSION=$(manifest_version "proj")
 
 # Display some information
 echo "Using geos version: ${GEOS_VERSION}" | indent
-echo "Using gdal version: ${GDAL_VERSION}" | indent
 echo "Using proj version: ${PROJ_VERSION}" | indent
 
 # Vendor directories
 VENDORED_GEOS="vendor/geos/$GEOS_VERSION"
-VENDORED_GDAL="vendor/gdal/$GDAL_VERSION"
 VENDORED_PROJ="vendor/proj/$PROJ_VERSION"
 
 # Make sure cache dir exists
@@ -80,12 +77,6 @@ if [ ! -d $CACHE_DIR/$VENDORED_GEOS ]; then
   download_package "geos" "${GEOS_VERSION}" "${CACHE_DIR}/${VENDORED_GEOS}"
 fi
 
-if [ ! -d $CACHE_DIR/$VENDORED_GDAL ]; then
-  echo "-----> Fetching and vendoring gdal"
-  rm -rf "$CACHE_DIR/vendor/gdal"
-  download_package "gdal" "${GDAL_VERSION}" "${CACHE_DIR}/${VENDORED_GDAL}"
-fi
-
 if [ ! -d $CACHE_DIR/$VENDORED_PROJ ]; then
   echo "-----> Fetching and vendoring proj"
   rm -rf "$CACHE_DIR/vendor/proj"
@@ -94,7 +85,7 @@ fi
 
 TARGET_VENDOR_DIR=".heroku/vendor"
 # Copy artifacts out of cache if exists.
-for dir in $VENDORED_GEOS $VENDORED_GDAL $VENDORED_PROJ; do
+for dir in $VENDORED_GEOS $VENDORED_PROJ; do
   mkdir -p $BUILD_DIR/$TARGET_VENDOR_DIR
   cp -r $CACHE_DIR/$dir/* $BUILD_DIR/$TARGET_VENDOR_DIR &> /dev/null || true
 done
@@ -104,9 +95,7 @@ APP_VENDOR="/app/$TARGET_VENDOR_DIR"
 
 # Setup environment variables
 set-env GEOS_LIBRARY_PATH "$APP_VENDOR/lib"
-set-env GDAL_LIBRARY_PATH "$APP_VENDOR/lib"
 set-env PROJ4_LIBRARY_PATH "$APP_VENDOR/lib"
-set-env GDAL_DATA "$APP_VENDOR/share/gdal"
 
 # Bundle workaround
 mkdir -p $BUILD_DIR/.bundle
